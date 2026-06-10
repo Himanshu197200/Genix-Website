@@ -7,9 +7,42 @@ import mobileHandImg from '../assets/Mobile.jpeg';
 import kushKadhyanImg from '../assets/kush Sir.jpeg';
 import siddarthaImg from '../assets/lastest_siddhart.jpeg';
 import shashankMitalImg from '../assets/shashank_mital.png';
-import podAestheticImg from '../assets/pod asthetic pic.jpeg';
+import vinayVermaImg from '../assets/Vinay_Verma.png';
+import podAestheticImg from '../assets/pod6.jpeg';
 
 const DEMO_VIDEO = 'https://cdn.speedsize.com/3f711f28-1488-44dc-b013-5e43284ac4b0/https://public-web-assets.uh-static.com/web_v2/homepage-v3/app-section/display-videos/ring-new.mp4';
+
+function TransparentPodImage({ src, alt, style }) {
+    const [url, setUrl] = useState('');
+    useEffect(() => {
+        if (!src) return;
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            ctx.drawImage(img, 0, 0);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const d = imgData.data;
+            for (let i = 0; i < d.length; i += 4) {
+                const avg = (d[i] + d[i+1] + d[i+2]) / 3;
+                if (avg > 180) {
+                    const a = (255 - avg) / 75;
+                    d[i+3] = a * 255;
+                    d[i] = (d[i] - (1 - a) * 255) / a;
+                    d[i+1] = (d[i+1] - (1 - a) * 255) / a;
+                    d[i+2] = (d[i+2] - (1 - a) * 255) / a;
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+            setUrl(canvas.toDataURL());
+        };
+    }, [src]);
+
+    return <img src={url || src} alt={alt} style={style} />;
+}
 
 function PodSVG({ size = 300 }) {
     const s = size;
@@ -265,22 +298,23 @@ function PodSection() {
                     </div>
                 </div>
 
-                {/* Hero photo - the real Genyx Pod in a premium gym */}
+                {/* Hero photo - Genyx Pod (pod6) on black background */}
                 <div className="r" style={{
                     position: 'relative', borderRadius: '20px 20px 0 0', overflow: 'hidden',
                     aspectRatio: '16/9', transitionDelay: '.15s',
                     background: '#0a0a0a',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                    <img
+                    <TransparentPodImage
                         src={podAestheticImg}
-                        alt="Genyx Pod deployed in a premium gym - Genyx Hardware on floor stand near dumbbell rack"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                        alt="Genyx Pod on floor stand"
+                        style={{
+                            position: 'relative', zIndex: 1,
+                            width: '100%', height: '100%',
+                            objectFit: 'contain', objectPosition: 'center',
+                            display: 'block',
+                        }}
                     />
-                    {/* Subtle dark vignette overlay */}
-                    <div style={{
-                        position: 'absolute', inset: 0,
-                        background: 'linear-gradient(to right, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.1) 45%, rgba(0,0,0,0.35) 100%)',
-                    }} />
                     {/* Pod callout - bottom-left overlay */}
                     <div style={{
                         position: 'absolute', bottom: 32, left: 36,
@@ -965,10 +999,11 @@ function TeamSection() {
             linkedin: 'https://www.linkedin.com/in/shashank-m-b9b20123/',
         },
         {
-            name: 'Aarav Mehta',
+            name: 'Vinay Kumar Verma',
             title: 'Computer Vision Tech Lead',
-            bio: 'Dual degree in Computer Science and Artificial Intelligence from IIT Delhi. Published computer vision and NLP researcher, with work recognised at AMIA 2023 and the SMM4H benchmark. Shipped production grade, real time computer vision infrastructure at one of India\'s largest technology organisations. Core expertise at the intersection of edge inference, biomechanics modelling, and deploying research-grade AI under real-world operational constraints.',
-            img: '',
+            bio: 'PhD Scholar and MTech in Computer Science from IIIT Delhi, specializing in robotic perception, human machine interaction, and 3D geometry. Developed and deployed production grade computer vision infrastructure, including multi camera player tracking and real time video analytics, for sports tech and retail organizations. Core expertise sits at the intersection of edge inference on resource constrained hardware, distributed ML pipelines, and deploying robust robotic manipulation models under real world physical constraints.',
+            img: vinayVermaImg,
+            linkedin: 'https://www.linkedin.com/in/vermavinay982/',
         },
     ];
     return (
@@ -2102,8 +2137,7 @@ export function PlatformPage() {
                         </p>
                     </div>
                     <div className="r" style={{ position: 'relative', borderRadius: '20px 20px 0 0', overflow: 'hidden', aspectRatio: '16/9', transitionDelay: '.15s', background: '#0a0a0a' }}>
-                        <img src={podAestheticImg} alt="Genyx Pod in gym" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.1) 45%, rgba(0,0,0,0.35) 100%)' }} />
+                        <TransparentPodImage src={podAestheticImg} alt="Genyx Pod in gym" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', display: 'block' }} />
                         <div style={{ position: 'absolute', bottom: 32, left: 36 }}>
                             <span style={{ fontSize: 9, color: 'rgba(77,255,239,.8)', letterSpacing: '.2em', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>Genyx Pod - Floor Stand</span>
                             <span style={{ fontSize: 16, fontWeight: 600, color: '#fff' }}>Deploy anywhere. Zero configuration.</span>
